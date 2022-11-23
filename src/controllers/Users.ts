@@ -1,25 +1,53 @@
-//import { Request, Response, NextFunction } from 'express'
-//import User from '../types/UserClass'
+import User from '../models/UserModel'
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
-// register new user
-/*
-export const registerUser = (req: Request, res: Response, next: NextFunction) => {
-  const user: User = new User ('armin', 'balesic', 890616, 'balesicarmin@gmail.com', 'Password123', 0o73123456)
+// variables
+const SALT_ROUNDS = 10
 
-  return user
+// create user function
+async function createUser (firstName: string, lastName: string, SSN: string, email: string, password: string, confirmPassword: string, phoneNumber: number):Promise<string> {
+  // validate user input
+  if (!(email && password && firstName && lastName)) 
+    return 'All input is required'
+    
+  // find existing user from DB
+  const existingUsers = await User.find({ email }) 
+    
+  // check if user already exists
+  if (existingUsers.length > 0) 
+    return 'Email is already taken'
+    
+  // check if passwords match
+  if (password !== confirmPassword) 
+    return('Passwords do not match')
+    
+  // encrypt provided password
+  const encryptedPassword = await bcrypt.hash(password, SALT_ROUNDS)
+    
+  // create the user
+  const user = await User.create({
+    firstName,
+    lastName,
+    SSN,
+    email,
+    encryptedPassword,
+    phoneNumber
+  })
+    
+  // create token with an expire date of 2 hrs
+  const token = jwt.sign(
+    { user_id: user._id, email },
+    'secret',
+    {
+      expiresIn: "2h",
+    }
+  )
+
+  // save user token to created user
+  user.token = token
+  await user.save()
+  return 'User has been created'
 }
-*/
 
-// get alla users
-//export const getUsers = (req: Request, res: Response, next: NextFunction) => {}
-
-// login user with JWT
-//export const loginUser = (req: Request, res: Response, next: NextFunction) => {}
-
-// update user credentials
-//export const updateUser = (req: Request, res: Response, next: NextFunction) => {}
-
-// delete specific user
-//export const deleteUser = (req: Request, res: Response, next: NextFunction) => {}
-
-//export default { getUsers, loginUser, updateUser, deleteUser, registerUser }
+export default { createUser }

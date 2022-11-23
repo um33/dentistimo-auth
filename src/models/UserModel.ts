@@ -7,7 +7,8 @@ const userSchema = new Schema({
   SSN: { type: Number, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
-  phoneNumber: { type: Number, required: true }
+  phoneNumber: { type: Number, required: true },
+  token: { type: String, required: true}
 })
   
 // Export User
