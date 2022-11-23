@@ -50,4 +50,32 @@ async function createUser (firstName: string, lastName: string, SSN: string, ema
   return 'User has been created'
 }
 
-export default { createUser }
+// login function
+async function login (email: string, password: string): Promise<string>{
+  // validate user input
+  if (!(email && password )) 
+    return 'All input is required'
+
+  // Validate user input
+  if (!(email && password)) {
+    return "All input is required"
+  }
+  // Validate if user exist in our database
+  const user = await User.findOne({ email })
+
+  if (user && (await bcrypt.compare(password, user.password))) {
+    // Create token
+    const token = jwt.sign(
+      { user_id: user._id, email },
+      'secret',
+      {
+        expiresIn: "2h",
+      }
+    )
+    // save user token
+    user.token = token
+  }
+  return 'invalid Credential'
+}
+
+export default { createUser, login  }
