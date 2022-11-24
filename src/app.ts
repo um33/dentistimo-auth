@@ -30,11 +30,13 @@ client.on('message', (topic, message) => {
       break
     case 'auth/create/user':
       // call createUser function
-      user.createUser('armin', 'balesic', '8906168110', 'balesicarmin@gmail.com', 'Password123', 'Password123', '123456789')
+      user.createUser('victor', 'campanello', '123456789', 'druner@gmail.com', 'Password123', 'Password123', '123456789')
       // eslint-disable-next-line no-console
       break
     case 'auth/login/user':
       // call loginUser function
+      // eslint-disable-next-line no-console
+      console.log("testing mqtt")
       break
     case 'auth/getall/users':
       // call getAllUsers function
