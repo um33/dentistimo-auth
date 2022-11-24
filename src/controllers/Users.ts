@@ -6,17 +6,23 @@ import jwt from 'jsonwebtoken'
 const SALT_ROUNDS = 10
 
 // create user function
-async function createUser (firstName: string, lastName: string, SSN: string, email: string, password: string, confirmPassword: string, phoneNumber: number):Promise<string> {
+async function createUser (firstName: string, lastName: string, SSN: string, email: string, password: string, confirmPassword: string, phoneNumber: string) {
   // validate user input
+  console.log('kladdkaka1')
   if (!(email && password && firstName && lastName)) 
     return 'All input is required'
-    
+  
+  console.log('kladdkaka2')
   // find existing user from DB
-  const existingUsers = await User.find({ email }) 
-    
+  const existingUsers = User.find({ email }) 
+  
+  console.log('kladdkaka3')
   // check if user already exists
-  if (existingUsers.length > 0) 
+  /*if (existingUsers.length > 0)
     return 'Email is already taken'
+  */
+
+  console.log('kladdkaka4')
     
   // check if passwords match
   if (password !== confirmPassword) 
@@ -24,16 +30,15 @@ async function createUser (firstName: string, lastName: string, SSN: string, ema
     
   // encrypt provided password
   const encryptedPassword = await bcrypt.hash(password, SALT_ROUNDS)
-    
+  
+  console.log('kladdkaka5')
+  
   // create the user
-  const user = await User.create({
-    firstName,
-    lastName,
-    SSN,
-    email,
-    encryptedPassword,
-    phoneNumber
-  })
+  const user = new User({firstName, lastName})
+
+  console.log('kladdkaka6')
+  console.log(user);
+  
     
   // create token with an expire date of 2 hrs
   const token = jwt.sign(
@@ -44,9 +49,9 @@ async function createUser (firstName: string, lastName: string, SSN: string, ema
     }
   )
 
+  console.log('kladdkaka7')
   // save user token to created user
-  user.token = token
-  await user.save()
+  
   return 'User has been created'
 }
 
@@ -72,10 +77,10 @@ async function login (email: string, password: string): Promise<string>{
         expiresIn: "2h",
       }
     )
-    // save user token
+    // save user token    
     user.token = token
   }
   return 'invalid Credential'
 }
 
-export default { createUser, login  }
+export default { createUser, login }

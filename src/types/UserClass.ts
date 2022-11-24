@@ -1,13 +1,13 @@
 class User {
   private firstName: string
   private lastName: string
-  private SSN: number
+  private SSN: string
   private email: string
   private password: string
   private phoneNumber: number
   private token: string
 
-  constructor(firstName: string, lastName: string, SSN: number, email: string, password: string, phoneNumber: number, token: string) {
+  constructor(firstName: string, lastName: string, SSN: string, email: string, password: string, phoneNumber: number, token: string) {
     this.firstName = firstName,
     this.lastName = lastName,
     this.SSN = SSN,
@@ -17,7 +17,5 @@ class User {
     this.token = token
   }
 }
-
-
 
 export default User
