@@ -31,7 +31,6 @@ client.on('message', (topic, message) => {
     case 'auth/create/user':
       // call createUser function
       user.createUser('armin', 'balesic', '8906168110', 'balesicarmin@gmail.com', 'Password123', 'Password123', '123456789')
-      console.log('Kladdkaka123')
       // eslint-disable-next-line no-console
       break
     case 'auth/login/user':

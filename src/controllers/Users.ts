@@ -3,42 +3,31 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
 // variables
-const SALT_ROUNDS = 10
+//const SALT_ROUNDS = 10
 
 // create user function
 async function createUser (firstName: string, lastName: string, SSN: string, email: string, password: string, confirmPassword: string, phoneNumber: string) {
   // validate user input
-  console.log('kladdkaka1')
   if (!(email && password && firstName && lastName)) 
     return 'All input is required'
   
-  console.log('kladdkaka2')
   // find existing user from DB
-  const existingUsers = User.find({ email }) 
+  //const existingUsers = User.find({ email }) 
   
-  console.log('kladdkaka3')
   // check if user already exists
   /*if (existingUsers.length > 0)
     return 'Email is already taken'
   */
-
-  console.log('kladdkaka4')
     
   // check if passwords match
   if (password !== confirmPassword) 
     return('Passwords do not match')
     
   // encrypt provided password
-  const encryptedPassword = await bcrypt.hash(password, SALT_ROUNDS)
-  
-  console.log('kladdkaka5')
-  
+  //const encryptedPassword = await bcrypt.hash(password, SALT_ROUNDS)
+    
   // create the user
-  const user = new User({firstName, lastName})
-
-  console.log('kladdkaka6')
-  console.log(user);
-  
+  const user = new User({firstName, lastName})  
     
   // create token with an expire date of 2 hrs
   const token = jwt.sign(
@@ -49,7 +38,7 @@ async function createUser (firstName: string, lastName: string, SSN: string, ema
     }
   )
 
-  console.log('kladdkaka7')
+  user.token = token
   // save user token to created user
   
   return 'User has been created'
