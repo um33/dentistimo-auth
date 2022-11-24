@@ -3,37 +3,31 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
 // variables
-const SALT_ROUNDS = 10
+//const SALT_ROUNDS = 10
 
 // create user function
-async function createUser (firstName: string, lastName: string, SSN: string, email: string, password: string, confirmPassword: string, phoneNumber: number):Promise<string> {
+async function createUser (firstName: string, lastName: string, SSN: string, email: string, password: string, confirmPassword: string, phoneNumber: string) {
   // validate user input
   if (!(email && password && firstName && lastName)) 
     return 'All input is required'
-    
+  
   // find existing user from DB
-  const existingUsers = await User.find({ email }) 
-    
+  //const existingUsers = User.find({ email }) 
+  
   // check if user already exists
-  if (existingUsers.length > 0) 
+  /*if (existingUsers.length > 0)
     return 'Email is already taken'
+  */
     
   // check if passwords match
   if (password !== confirmPassword) 
     return('Passwords do not match')
     
   // encrypt provided password
-  const encryptedPassword = await bcrypt.hash(password, SALT_ROUNDS)
+  //const encryptedPassword = await bcrypt.hash(password, SALT_ROUNDS)
     
   // create the user
-  const user = await User.create({
-    firstName,
-    lastName,
-    SSN,
-    email,
-    encryptedPassword,
-    phoneNumber
-  })
+  const user = new User({firstName, lastName})  
     
   // create token with an expire date of 2 hrs
   const token = jwt.sign(
@@ -44,9 +38,9 @@ async function createUser (firstName: string, lastName: string, SSN: string, ema
     }
   )
 
-  // save user token to created user
   user.token = token
-  await user.save()
+  // save user token to created user
+  
   return 'User has been created'
 }
 
@@ -72,10 +66,10 @@ async function login (email: string, password: string): Promise<string>{
         expiresIn: "2h",
       }
     )
-    // save user token
+    // save user token    
     user.token = token
   }
   return 'invalid Credential'
 }
 
-export default { createUser, login  }
+export default { createUser, login }
