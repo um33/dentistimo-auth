@@ -5,11 +5,11 @@ dotenv.config()
 const client = mqtt.connect(process.env.MQTT_URI || 'mqtt://localhost:1883')
 
 client.on('connect', () => {
-  client.subscribe('auth', (err) => {
-    if (!err) {
-      client.publish('auth', 'Hello mqtt, this is auth server speaking!')
-    }
-  })
+  client.subscribe ('auth/create/user')
+  client.subscribe ('auth/login/user')
+  client.subscribe ('auth/getall/users')
+  client.subscribe ('auth/update/users')
+  client.subscribe ('auth/delete/user')
 })
 
 client.on('message', (topic, message) => {
