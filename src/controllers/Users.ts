@@ -1,6 +1,8 @@
 import User from '../models/UserModel'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import mongoose, { Document } from 'mongoose'
+import { UserInterface } from '../types/UserInterface'
 
 // variable declarations
 const SALT_ROUNDS = 10
@@ -28,7 +30,7 @@ async function createUser (message:string) {
   const encryptedPassword = await bcrypt.hash(password, SALT_ROUNDS)
     
   // create new user
-  const user = new User({firstName, lastName, SSN, email, password: encryptedPassword, phoneNumber})  
+  const user = new User({firstName, lastName, SSN, email, password: encryptedPassword, phoneNumber}) as unknown as UserInterface
     
   // create token with an expire date of 2 hrs
   const token = jwt.sign(
@@ -40,11 +42,10 @@ async function createUser (message:string) {
   )
 
   // save user token to created user
-  user.token = token
-
+  await user.save()
+  console.log(user, token)
   // save new user to DB
-  user.save()
-  return 'User has been created'
+  return {...user._doc, token}
 }
 
 // login function
@@ -73,7 +74,7 @@ async function login(email: string, password: string) {
     )
 
     // save user token
-    user.token = token
+    return {...user, token}
   }
 }
 

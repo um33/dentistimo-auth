@@ -1,11 +1,12 @@
-interface User {
+import mongoose, { Document } from "mongoose"
+
+export interface UserInterface extends Document{
+  _id: mongoose.Types.ObjectId
   firstName: string
   lastName: string
   SSN: string
   email: string
   password: string
-  phoneNumber: string
-  token: string
+  phoneNumber?: string
+  _doc?: Record<string, unknown>
 }
-
-export default User
