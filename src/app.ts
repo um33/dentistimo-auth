@@ -6,7 +6,7 @@ import mongoose, { ConnectOptions } from 'mongoose'
 dotenv.config()
 
 // Variables
-const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/authDB'
+const mongoURI = process.env.MONGO_URI || 'mongodb://127.0.0.1ç:27017/authDB'
 const client = mqtt.connect(process.env.MQTT_URI || 'mqtt://localhost:1883')
 
 // Connect to MongoDB
