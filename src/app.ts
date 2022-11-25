@@ -17,8 +17,6 @@ mongoose.connect(
     if (err) {
       // eslint-disable-next-line no-console
       console.error(err)
-      // eslint-disable-next-line no-console
-      console.error(err.stack)
     } else if(process.env.NODE_ENV !== 'production') {
       // eslint-disable-next-line no-console
       console.log('Connected to MongoDB')
