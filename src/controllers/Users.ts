@@ -1,7 +1,6 @@
 import User from '../models/UserModel'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import mongoose, { Document } from 'mongoose'
 import { UserInterface } from '../types/UserInterface'
 
 // variable declarations
@@ -43,6 +42,7 @@ async function createUser (message:string) {
 
   // save user token to created user
   await user.save()
+  // eslint-disable-next-line no-console
   console.log(user, token)
   // save new user to DB
   return {...user._doc, token}

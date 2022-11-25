@@ -42,7 +42,6 @@ client.on('message', async (topic: string, message:Buffer) => {
     case 'auth/user/create': {
       // call createUser function
       const newUser = await user.createUser(message.toString())
-      console.log(newUser)
       client.publish('gateway/user/create', JSON.stringify(newUser))
       // eslint-disable-next-line no-console
       break
