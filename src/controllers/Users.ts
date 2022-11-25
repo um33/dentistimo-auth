@@ -6,7 +6,9 @@ import jwt from 'jsonwebtoken'
 const SALT_ROUNDS = 10
 
 // create user function
-async function createUser (firstName: string, lastName: string, SSN: string, email: string, password: string, confirmPassword: string, phoneNumber: string) {
+async function createUser (message:string) {
+  const userInfo = JSON.parse(message)
+  const {firstName, lastName, SSN, email, phoneNumber , password, confirmPassword} = userInfo
   // validate user input
   if (!(firstName && lastName && SSN && email && password)) 
     return 'All input is required'
@@ -55,6 +57,9 @@ async function login(email: string, password: string) {
 
   // Validate if user exist in our database
   const user = await User.findOne({ email })
+  if(!user){
+    return'invalid credential'
+  }
 
   // if user exists and passwords match, then create and assign user token
   if (user && (await bcrypt.compare(password, user.password))) {
@@ -69,7 +74,8 @@ async function login(email: string, password: string) {
 
     // save user token
     user.token = token
-  }}
+  }
+}
 
 // export funtions
 export default { createUser, login }
