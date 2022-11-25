@@ -1,27 +1,40 @@
 import mqtt from 'mqtt'
 import * as dotenv from 'dotenv'
 import user from './controllers/Users'
-import mongoose from 'mongoose'
+import mongoose, { ConnectOptions } from 'mongoose'
 
 dotenv.config()
 
 // Variables
-const mongoURI = 'mongodb://localhost:27017/authDB'
+const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/authDB'
 const client = mqtt.connect(process.env.MQTT_URI || 'mqtt://localhost:1883')
 
 // Connect to MongoDB
-
-
+mongoose.connect(
+  mongoURI,
+  { useNewUrlParser: true, useUnifiedTopology: true } as ConnectOptions,
+  (err) => {
+    if (err) {
+      // eslint-disable-next-line no-console
+      console.error(err)
+      // eslint-disable-next-line no-console
+      console.error(err.stack)
+    } else if(process.env.NODE_ENV !== 'production') {
+      // eslint-disable-next-line no-console
+      console.log('Connected to MongoDB')
+    }
+  }
+)
 
 client.on('connect', () => {
-  client.subscribe ('auth/user/create')
-  client.subscribe ('auth/user/login')
-  client.subscribe ('auth/users/getall')
-  client.subscribe ('auth/users/update')
-  client.subscribe ('auth/user/delete')
+  client.subscribe('auth/user/create')
+  client.subscribe('auth/user/login')
+  client.subscribe('auth/users/getall')
+  client.subscribe('auth/users/update')
+  client.subscribe('auth/user/delete')
 })
 
-client.on('message', (topic:string, message:string) => {
+client.on('message', (topic: string, message: string) => {
   switch (topic) {
     case 'auth':
       // eslint-disable-next-line no-console
@@ -38,7 +51,7 @@ client.on('message', (topic:string, message:string) => {
     case 'auth/user/login':
       // call loginUser function
       // eslint-disable-next-line no-console
-      console.log("testing mqtt")
+      console.log('testing mqtt')
       break
     case 'auth/users/all':
       // call getAllUsers function
