@@ -48,6 +48,9 @@ client.on('message', async (topic: string, message:Buffer) => {
     }
     case 'auth/user/login': 
       // call loginUser function
+      // eslint-disable-next-line no-case-declarations
+      const loggedIn = await user.login(message.toString())
+      client.publish('gateway/user/login', JSON.stringify(loggedIn))
       // eslint-disable-next-line no-console
       console.log('testing mqtt')
       break

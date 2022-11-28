@@ -49,7 +49,9 @@ async function createUser (message:string) {
 }
 
 // login function
-async function login(email: string, password: string) {
+async function login(message:string) {
+  const userInfo = JSON.parse(message)
+  const{email, password} = userInfo
   
   // Validate user input
   if (!(email && password)) {
