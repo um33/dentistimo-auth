@@ -15,7 +15,6 @@ mongoose.connect(mongoURI)
 client.on('connect', () => {
   client.subscribe ('auth/create/user')
   client.subscribe ('auth/login/user')
-  client.subscribe ('auth/getall/users')
   client.subscribe ('auth/update/users')
   client.subscribe ('auth/delete/user')
   client.publish ('auth/create/user', 'haloo')
@@ -37,9 +36,6 @@ client.on('message', (topic, message) => {
       // call loginUser function
       // eslint-disable-next-line no-console
       console.log("testing mqtt")
-      break
-    case 'auth/getall/users':
-      // call getAllUsers function
       break
     case 'auth/update/user':
       // call updateUser function
