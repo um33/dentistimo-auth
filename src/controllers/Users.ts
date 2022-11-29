@@ -1,6 +1,7 @@
 import User from '../models/UserModel'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import { Document } from 'mongoose'
 
 // variable declarations
 const SALT_ROUNDS = 10
@@ -71,5 +72,27 @@ async function login(email: string, password: string) {
     user.token = token
   }}
 
+// update user
+async function updateUser(message:string){
+  const userInfo = JSON.parse(message)
+  const {firstName, lastName, email, phoneNumber, _id} = userInfo
+  try {
+    const toUpdate = await User.findByIdAndUpdate(
+      _id,
+      {
+        firstName,
+        lastName,
+        email,
+        phoneNumber,
+      },
+      { new: true }
+    ) as Document
+    const updatedUser = await toUpdate.save()
+    return updatedUser
+  } catch (err) {
+    return err
+  }
+}
+
 // export funtions
-export default { createUser, login }
+export default { createUser, login, updateUser }
