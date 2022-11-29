@@ -1,50 +1,63 @@
 import mqtt from 'mqtt'
 import * as dotenv from 'dotenv'
 import user from './controllers/Users'
-import mongoose from 'mongoose'
+import mongoose, { ConnectOptions } from 'mongoose'
 
 dotenv.config()
 
 // Variables
-const mongoURI = 'mongodb://localhost:27017/users'
+const mongoURI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/authDB'
 const client = mqtt.connect(process.env.MQTT_URI || 'mqtt://localhost:1883')
 
 // Connect to MongoDB
-mongoose.connect(mongoURI)
+mongoose.connect(
+  mongoURI,
+  { useNewUrlParser: true, useUnifiedTopology: true } as ConnectOptions,
+  (err) => {
+    if (err) {
+      // eslint-disable-next-line no-console
+      console.error(err)
+    } else if(process.env.NODE_ENV !== 'production') {
+      // eslint-disable-next-line no-console
+      console.log('Connected to MongoDB')
+    }
+  }
+)
 
 client.on('connect', () => {
-  client.subscribe ('auth/create/user')
-  client.subscribe ('auth/login/user')
-  client.subscribe ('auth/getall/users')
-  client.subscribe ('auth/update/users')
-  client.subscribe ('auth/delete/user')
-  client.publish ('auth/create/user', 'haloo')
+  client.subscribe('auth/user/create')
+  client.subscribe('auth/user/login')
+  client.subscribe('auth/users/getall')
+  client.subscribe('auth/users/update')
+  client.subscribe('auth/user/delete')
 })
 
-client.on('message', (topic, message) => {
+client.on('message', async (topic: string, message:Buffer) => {
   switch (topic) {
     case 'auth':
       // eslint-disable-next-line no-console
       console.log(message.toString())
       client.end()
       break
-    case 'auth/create/user':
+    case 'auth/user/create': {
       // call createUser function
-      user.createUser('victor', 'campanello', '123456789', 'druner@gmail.com', 'Password123', 'Password123', '123456789')
+      const newUser = await user.createUser(message.toString())
+      client.publish('gateway/user/create', JSON.stringify(newUser))
       // eslint-disable-next-line no-console
       break
-    case 'auth/login/user':
+    }
+    case 'auth/user/login': 
       // call loginUser function
       // eslint-disable-next-line no-console
-      console.log("testing mqtt")
+      console.log('testing mqtt')
       break
-    case 'auth/getall/users':
+    case 'auth/users/all':
       // call getAllUsers function
       break
-    case 'auth/update/user':
+    case 'auth/user/update':
       // call updateUser function
       break
-    case 'auth/delete/user':
+    case 'auth/user/delete':
       // call deleteUser function
       break
   }

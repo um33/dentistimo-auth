@@ -1,12 +1,15 @@
 import User from '../models/UserModel'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import { UserInterface } from '../types/UserInterface'
 
 // variable declarations
 const SALT_ROUNDS = 10
 
 // create user function
-async function createUser (firstName: string, lastName: string, SSN: string, email: string, password: string, confirmPassword: string, phoneNumber: string) {
+async function createUser (message:string) {
+  const userInfo = JSON.parse(message)
+  const {firstName, lastName, SSN, email, phoneNumber , password, confirmPassword} = userInfo
   // validate user input
   if (!(firstName && lastName && SSN && email && password)) 
     return 'All input is required'
@@ -26,7 +29,7 @@ async function createUser (firstName: string, lastName: string, SSN: string, ema
   const encryptedPassword = await bcrypt.hash(password, SALT_ROUNDS)
     
   // create new user
-  const user = new User({firstName, lastName, SSN, email, password: encryptedPassword, phoneNumber})  
+  const user = new User({firstName, lastName, SSN, email, password: encryptedPassword, phoneNumber}) as unknown as UserInterface
     
   // create token with an expire date of 2 hrs
   const token = jwt.sign(
@@ -38,11 +41,11 @@ async function createUser (firstName: string, lastName: string, SSN: string, ema
   )
 
   // save user token to created user
-  user.token = token
-
+  await user.save()
+  // eslint-disable-next-line no-console
+  console.log(user, token)
   // save new user to DB
-  user.save()
-  return 'User has been created'
+  return {...user._doc, token}
 }
 
 // login function
@@ -55,6 +58,9 @@ async function login(email: string, password: string) {
 
   // Validate if user exist in our database
   const user = await User.findOne({ email })
+  if(!user){
+    return'invalid credential'
+  }
 
   // if user exists and passwords match, then create and assign user token
   if (user && (await bcrypt.compare(password, user.password))) {
@@ -68,8 +74,9 @@ async function login(email: string, password: string) {
     )
 
     // save user token
-    user.token = token
-  }}
+    return {...user, token}
+  }
+}
 
 // export funtions
 export default { createUser, login }
