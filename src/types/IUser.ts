@@ -1,6 +1,6 @@
 import mongoose, { Document } from "mongoose"
 
-export interface UserInterface extends Document{
+export interface IUser extends Document{
   _id: mongoose.Types.ObjectId
   firstName: string
   lastName: string
