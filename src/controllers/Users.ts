@@ -1,7 +1,6 @@
-import User from '../models/UserModel'
+import User from '../models/User'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import { UserInterface } from '../types/UserInterface'
 
 // variable declarations
 const SALT_ROUNDS = 10
@@ -29,7 +28,7 @@ async function createUser (message:string) {
   const encryptedPassword = await bcrypt.hash(password, SALT_ROUNDS)
     
   // create new user
-  const user = new User({firstName, lastName, SSN, email, password: encryptedPassword, phoneNumber}) as unknown as UserInterface
+  const user = new User({firstName, lastName, SSN, email, password: encryptedPassword, phoneNumber})
     
   // create token with an expire date of 2 hrs
   const token = jwt.sign(
@@ -76,7 +75,7 @@ async function login(message:string) {
     )
 
     // save user token
-    return {...user, token}
+    return {...user._doc, token}
   }
 }
 
