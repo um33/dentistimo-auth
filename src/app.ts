@@ -50,12 +50,12 @@ client.on('message', async (topic: string, message:Buffer) => {
       // eslint-disable-next-line no-console
       console.log('testing mqtt')
       break
-    case 'auth/user/update':
+    case 'auth/user/update': {
       // call updateUser function
-      // eslint-disable-next-line no-case-declarations
       const updateUser = await user.updateUser(message.toString())
-      client.publish('gateway/user/create', JSON.stringify(updateUser))
+      client.publish('gateway/user/update', JSON.stringify(updateUser))
       break
+    }
     case 'auth/user/delete':
       // call deleteUser function
       break
