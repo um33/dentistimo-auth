@@ -25,37 +25,38 @@ mongoose.connect(
 )
 
 client.on('connect', () => {
-  client.subscribe ('auth/create/user')
-  client.subscribe ('auth/login/user')
-  client.subscribe ('auth/update/users')
-  client.subscribe ('auth/delete/user')
-  client.publish ('auth/create/user', 'haloo')
+  client.subscribe('auth/user/create')
+  client.subscribe('auth/user/login')
+  client.subscribe('auth/user/update')
+  client.subscribe('auth/user/delete')
 })
 
-client.on('message', async (topic, message) => {
+client.on('message', async (topic: string, message:Buffer) => {
   switch (topic) {
     case 'auth':
       // eslint-disable-next-line no-console
       console.log(message.toString())
       client.end()
       break
-    case 'auth/create/user':
+    case 'auth/user/create': {
       // call createUser function
-      user.createUser('victor', 'campanello', '123456789', 'druner@gmail.com', 'Password123', 'Password123', '123456789')
+      const newUser = await user.createUser(message.toString())
+      client.publish('gateway/user/create', JSON.stringify(newUser))
       // eslint-disable-next-line no-console
       break
-    case 'auth/login/user':
+    }
+    case 'auth/user/login': 
       // call loginUser function
       // eslint-disable-next-line no-console
-      console.log("testing mqtt")
+      console.log('testing mqtt')
       break
-    case 'auth/update/user':
+    case 'auth/user/update':
       // call updateUser function
       // eslint-disable-next-line no-case-declarations
       const updateUser = await user.updateUser(message.toString())
       client.publish('gateway/user/create', JSON.stringify(updateUser))
       break
-    case 'auth/delete/user':
+    case 'auth/user/delete':
       // call deleteUser function
       break
   }

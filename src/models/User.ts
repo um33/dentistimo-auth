@@ -1,4 +1,5 @@
 import mongoose from "mongoose"
+import { IUser } from "../types/IUser"
 
 // Define user schema
 const userSchema = new mongoose.Schema({
@@ -7,9 +8,8 @@ const userSchema = new mongoose.Schema({
   SSN: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
-  phoneNumber: { type: String, required: true },
-  token: { type: String, required: false}
+  phoneNumber: { type: String, required: false },
 })
   
 // Export User
-export default mongoose.model('user', userSchema)
+export default mongoose.model<IUser>('user', userSchema)
