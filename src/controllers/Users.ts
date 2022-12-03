@@ -100,5 +100,29 @@ async function updateUser(message:string){
   }
 }
 
+// delete user
+async function deleteUser(message:string){
+  const userInfo = JSON.parse(message)
+  const {id, password, email} = userInfo
+
+  const user = await User.findOne({ id })
+  if(!user){
+    return'invalid credential'
+  }
+  try{
+    const isPasswordValid = await bcrypt.compare(password, user.password)
+    if(!isPasswordValid){
+      return 'invalid credential'
+    }
+  } catch (err) {
+    return err
+  }
+  try{
+    await User.findByIdAndDelete(id)
+  } catch (err) {
+    return err
+  }
+}
+
 // export funtions
 export default { createUser, login, updateUser }
