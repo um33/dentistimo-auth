@@ -81,10 +81,10 @@ async function login(email: string, password: string) {
 // update user
 async function updateUser(message:string){
   const userInfo = JSON.parse(message)
-  const {firstName, lastName, email, phoneNumber, _id} = userInfo
+  const {firstName, lastName, email, phoneNumber, id} = userInfo
   try {
     const toUpdate = await User.findByIdAndUpdate(
-      _id,
+      id,
       {
         firstName,
         lastName,
@@ -92,9 +92,9 @@ async function updateUser(message:string){
         phoneNumber,
       },
       { new: true }
-    ) as Document
-    const updatedUser = await toUpdate.save()
-    return updatedUser
+    )
+    const updatedUser = await toUpdate?.save()
+    return {...updatedUser?._doc}
   } catch (err) {
     return err
   }
