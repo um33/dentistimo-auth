@@ -128,4 +128,4 @@ async function deleteUser(message:string){
 }
 
 // export funtions
-export default { createUser, login, updateUser }
+export default { createUser, login, updateUser, deleteUser }
