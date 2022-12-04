@@ -42,19 +42,17 @@ client.on('message', async (topic: string, message:Buffer) => {
       // call createUser function
       const newUser = await user.createUser(message.toString())
       client.publish('gateway/user/create', JSON.stringify(newUser))
-      // eslint-disable-next-line no-console
       break
     }
     case 'auth/user/login': 
       // call loginUser function
-      // eslint-disable-next-line no-console
       break
-    case 'auth/user/update':
+    case 'auth/user/update':{
       // call updateUser function
-      // eslint-disable-next-line no-case-declarations
       const updateUser = await user.updateUser(message.toString())
       client.publish('gateway/user/create', JSON.stringify(updateUser))
       break
+    }
     case 'auth/user/delete': {
       // call deleteUser function
       const todeleteUser = await user.deleteUser(message.toString())
