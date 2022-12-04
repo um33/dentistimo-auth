@@ -105,20 +105,20 @@ async function deleteUser(message:string){
   const userInfo = JSON.parse(message)
   const {id, password } = userInfo
 
-   // Validate if user exist in our database
+  // Validate if user exist in our database
   const user = await User.findOne({ id })
   if(!user){
     return'invalid credential'
   }
-  try{
-    // Validate if password is correct
-    const isPasswordValid = await bcrypt.compare(password, user.password)
-    if(!isPasswordValid){
-      return 'invalid credential'
-    }
-  } catch (err) {
-    return err
-  }
+  // try{
+  // Validate if password is correct
+  //const isPasswordValid = await bcrypt.compare(password, User.password)
+  //if(!isPasswordValid){
+  //return 'invalid credential'
+  // }
+  //} catch (err) {
+  // return err
+  //}
   try{
     // find that specific id provided by user and delete it
     await User.findByIdAndDelete(id)
