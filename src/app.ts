@@ -33,20 +33,12 @@ client.on('connect', () => {
 
 client.on('message', async (topic: string, message:Buffer) => {
   switch (topic) {
-    case 'auth':
-      // eslint-disable-next-line no-console
-      console.log(message.toString())
-      client.end()
-      break
     case 'auth/user/create': {
       // call createUser function
       const newUser = await user.createUser(message.toString())
       client.publish('gateway/user/create', JSON.stringify(newUser))
       break
     }
-    case 'auth/user/login': 
-      // call loginUser function
-      break
     case 'auth/user/update':{
       // call updateUser function
       const updateUser = await user.updateUser(message.toString())
