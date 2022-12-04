@@ -103,13 +103,15 @@ async function updateUser(message:string){
 // delete user
 async function deleteUser(message:string){
   const userInfo = JSON.parse(message)
-  const {id, password, email} = userInfo
+  const {id, password } = userInfo
 
+   // Validate if user exist in our database
   const user = await User.findOne({ id })
   if(!user){
     return'invalid credential'
   }
   try{
+    // Validate if password is correct
     const isPasswordValid = await bcrypt.compare(password, user.password)
     if(!isPasswordValid){
       return 'invalid credential'
@@ -118,6 +120,7 @@ async function deleteUser(message:string){
     return err
   }
   try{
+    // find that specific id provided by user and delete it
     await User.findByIdAndDelete(id)
   } catch (err) {
     return err
