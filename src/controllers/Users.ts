@@ -80,28 +80,6 @@ async function login(message:string) {
   }
 }
 
-// update user
-async function updateUser(message:string){
-  const userInfo = JSON.parse(message)
-  const {firstName, lastName, email, phoneNumber, _id} = userInfo
-  try {
-    const toUpdate = await User.findByIdAndUpdate(
-      _id,
-      {
-        firstName,
-        lastName,
-        email,
-        phoneNumber,
-      },
-      { new: true }
-    ) as Document
-    const updatedUser = await toUpdate.save()
-    return updatedUser
-  } catch (err) {
-    return err
-  }
-}
-
 // delete user
 async function deleteUser(message:string){
   const userInfo = JSON.parse(message)
@@ -125,4 +103,4 @@ async function deleteUser(message:string){
 }
 
 // export funtions
-export default { createUser, login, updateUser, deleteUser }
+export default { createUser, login, deleteUser }

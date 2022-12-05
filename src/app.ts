@@ -41,8 +41,6 @@ client.on('message', async (topic: string, message:Buffer) => {
     }
     case 'auth/user/update':{
       // call updateUser function
-      const updateUser = await user.updateUser(message.toString())
-      client.publish('gateway/user/create', JSON.stringify(updateUser))
       break
     }
     case 'auth/user/delete': {
