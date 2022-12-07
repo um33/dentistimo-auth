@@ -6,7 +6,7 @@ import mongoose, { ConnectOptions } from 'mongoose'
 dotenv.config()
 
 // Variables
-const mongoURI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/authDB'
+const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/users'
 const client = mqtt.connect(process.env.MQTT_URI || 'mqtt://localhost:1883')
 
 // Connect to MongoDB
@@ -27,33 +27,36 @@ mongoose.connect(
 client.on('connect', () => {
   client.subscribe('auth/user/create')
   client.subscribe('auth/user/login')
-  client.subscribe('auth/users/getall')
-  client.subscribe('auth/users/update')
+  client.subscribe('auth/user/return')
+  client.subscribe('auth/user/update')
   client.subscribe('auth/user/delete')
 })
 
-client.on('message', async (topic: string, message:Buffer) => {
+client.on('message', async (topic: string, message: Buffer) => {
   switch (topic) {
     case 'auth/user/create': {
-      // call createUser function
+      // call 'createUser' function
       const newUser = await user.createUser(message.toString())
       client.publish('gateway/user/create', JSON.stringify(newUser))
       break
     }
     case 'auth/user/login': {
-      // call loginUser function
+      // call 'login' function
       const loggedIn = await user.login(message.toString())
       client.publish('gateway/user/login', JSON.stringify(loggedIn))
       break
     }
-    case 'auth/users/all':
-      // call getAllUsers function
+    case 'auth/user/return': {
+      // call 'getAUser' function
+      const returnUser = await user.getUser(message.toString())
+      client.publish('gateway/user/return', JSON.stringify(returnUser))
       break
+    }
     case 'auth/user/update':
-      // call updateUser function
+      // call 'updateUser' function
       break
     case 'auth/user/delete':
-      // call deleteUser function
+      // call 'deleteUser' function
       break
   }
 })
