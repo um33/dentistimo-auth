@@ -112,12 +112,36 @@ async function getUser(message: string) {
     console.log(error)
     return error
   }
-
 }
 
-// TODO deleteUser
+// delete user with a specific ID
+async function deleteUser(message: string) {
+  try {
+    const userInfo = JSON.parse(message)
+    const id = userInfo
+    const user = await User.findOneAndDelete(id)
+  
+    if (!user) {
+      return 'Invalid id'
+    }
+
+    if (user === null) {
+      return 'User does not exist'
+    }
+
+    // eslint-disable-next-line no-console
+    console.log(user)
+    return 'User has been deleted'
+  } 
+  
+  catch (error) {
+    // eslint-disable-next-line no-console
+    console.log(error)
+    return error
+  }
+}
 
 // TODO updateUser
 
 // export funtions
-export default { createUser, login, getUser }
+export default { createUser, login, getUser, deleteUser }

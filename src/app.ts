@@ -55,8 +55,11 @@ client.on('message', async (topic: string, message: Buffer) => {
     case 'auth/user/update':
       // call 'updateUser' function
       break
-    case 'auth/user/delete':
+    case 'auth/user/delete': {
       // call 'deleteUser' function
+      const deleteUser = await user.deleteUser(message.toString())
+      client.publish('gateway/user/delete', JSON.stringify(deleteUser))
       break
+    }
   }
 })
