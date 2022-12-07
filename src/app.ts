@@ -48,13 +48,16 @@ client.on('message', async (topic: string, message: Buffer) => {
     }
     case 'auth/user/return': {
       // call 'getAUser' function
-      const returnUser = await user.getUser(message.toString())
-      client.publish('gateway/user/return', JSON.stringify(returnUser))
+      const getUser = await user.getUser(message.toString())
+      client.publish('gateway/user/return', JSON.stringify(getUser))
       break
     }
-    case 'auth/user/update':
+    case 'auth/user/update': {
       // call 'updateUser' function
+      const updateUser = await user.updateUser(message.toString())
+      client.publish('gateway/user/update', JSON.stringify(updateUser))
       break
+    }
     case 'auth/user/delete': {
       // call 'deleteUser' function
       const deleteUser = await user.deleteUser(message.toString())
