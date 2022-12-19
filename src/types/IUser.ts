@@ -7,6 +7,6 @@ export interface IUser extends Document{
   SSN: string
   email: string
   password: string
-  phoneNumber?: string
+  phoneNumber: string
   _doc?: Record<string, unknown>
 }
