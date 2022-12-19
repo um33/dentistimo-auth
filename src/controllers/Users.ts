@@ -9,10 +9,10 @@ const SALT_ROUNDS = 10
 async function createUser (message: string) {
   try {
     const userInfo = JSON.parse(message)
-    const { firstName, lastName, SSN, email, phoneNumber , password, confirmPassword } = userInfo
+    const { firstName, lastName, SSN, email , password, confirmPassword, phoneNumber } = userInfo
   
     // validate user input
-    if (!(firstName && lastName && SSN && email && password)) 
+    if (!(firstName && lastName && SSN && email && password && phoneNumber)) 
       return 'All input is required'
   
     // find existing user from DB

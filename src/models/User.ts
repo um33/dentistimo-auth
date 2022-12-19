@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
   SSN: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
-  phoneNumber: { type: String, required: false },
+  phoneNumber: { type: String, required: true },
 })
   
 // Export User
