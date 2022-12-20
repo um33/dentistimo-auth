@@ -25,43 +25,40 @@ mongoose.connect(
 )
 
 client.on('connect', () => {
-  client.subscribe('auth/user/create')
-  client.subscribe('auth/user/login')
-  client.subscribe('auth/user/return')
-  client.subscribe('auth/user/update')
-  client.subscribe('auth/user/delete')
+  client.subscribe('auth/#', { qos: 1 })
 })
 
 client.on('message', async (topic: string, message: Buffer) => {
+  const parsedMessage = JSON.parse(message.toString())
   switch (topic) {
     case 'auth/user/create': {
       // call 'createUser' function
       const newUser = await user.createUser(message.toString())
-      client.publish('gateway/user/create', JSON.stringify(newUser))
+      client.publish(parsedMessage.responseTopic, JSON.stringify(newUser), {qos: 2})
       break
     }
     case 'auth/user/login': {
       // call 'login' function
       const loggedIn = await user.login(message.toString())
-      client.publish('gateway/user/login', JSON.stringify(loggedIn))
+      client.publish(parsedMessage.responseTopic, JSON.stringify(loggedIn), {qos: 2})
       break
     }
     case 'auth/user/return': {
       // call 'getAUser' function
       const getUser = await user.getUser(message.toString())
-      client.publish('gateway/user/return', JSON.stringify(getUser))
+      client.publish(parsedMessage.responseTopic, JSON.stringify(getUser), {qos: 1})
       break
     }
     case 'auth/user/update': {
       // call 'updateUser' function
       const updateUser = await user.updateUser(message.toString())
-      client.publish('gateway/user/update', JSON.stringify(updateUser))
+      client.publish(parsedMessage.responseTopic, JSON.stringify(updateUser), {qos: 1})
       break
     }
     case 'auth/user/delete': {
       // call 'deleteUser' function
       const deleteUser = await user.deleteUser(message.toString())
-      client.publish('gateway/user/delete', JSON.stringify(deleteUser))
+      client.publish(parsedMessage.responseTopic, JSON.stringify(deleteUser), {qos: 2})
       break
     }
   }
