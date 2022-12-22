@@ -44,7 +44,7 @@ client.on('message', async (topic: string, message: Buffer) => {
       break
     }
     case 'auth/user/return': {
-      // call 'getAUser' function
+      // call 'getUser' function
       const getUser = await user.getUser(message.toString())
       client.publish(parsedMessage.responseTopic, JSON.stringify(getUser), {qos: 1})
       break
