@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken'
 // variable declarations
 const SALT_ROUNDS = 10
 
-// create user
+// create user from passed in data
 async function createUser (message: string) {
   try {
     const userInfo = JSON.parse(message)
@@ -91,14 +91,18 @@ async function login(message: string) {
 async function getUser(message: string) {
   try {
     const userInfo = JSON.parse(message)
-    const id = userInfo
-    const user = await User.findById(id)
+    const userID = userInfo.userid
+    const user = await User.findById(userID)
   
     if (!user) {
-      return 'Invalid id'
+          // eslint-disable-next-line no-console
+      console.log('Invalid user ID')
+      return 'Invalid user ID'
     }
 
     if (user === null) {
+      // eslint-disable-next-line no-console
+      console.log('User does not exist')
       return 'User does not exist'
     }
 
@@ -141,7 +145,7 @@ async function deleteUser(message: string) {
   }
 }
 
-// TODO updateUser
+// updates a user given the ID
 async function updateUser(message: string) {
   try {
     const userInfo = JSON.parse(message)
