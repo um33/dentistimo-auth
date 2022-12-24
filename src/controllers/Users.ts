@@ -6,40 +6,49 @@ import jwt from 'jsonwebtoken'
 const SALT_ROUNDS = 10
 
 // create user from passed in data
-async function createUser (message: string) {
+async function createUser(message: string) {
   try {
     const userInfo = JSON.parse(message)
-    const { firstName, lastName, SSN, email , password, confirmPassword, phoneNumber } = userInfo
-  
+    const {
+      firstName,
+      lastName,
+      SSN,
+      email,
+      password,
+      confirmPassword,
+      phoneNumber,
+    } = userInfo
+
     // validate user input
-    if (!(firstName && lastName && SSN && email && password && phoneNumber)) 
+    if (!(firstName && lastName && SSN && email && password && phoneNumber))
       return 'All input is required'
-  
+
     // find existing user from DB
-    const existingUsers = User.find({ email }) 
-  
+    const existingUsers = User.find({ email })
+
     // check if user already exists
-    if ((await existingUsers).length > 0)
-      return 'Email is already taken'
-  
+    if ((await existingUsers).length > 0) return 'Email is already taken'
+
     // check if passwords match
-    if (password !== confirmPassword) 
-      return('Passwords do not match')
-  
+    if (password !== confirmPassword) return 'Passwords do not match'
+
     // encrypt provided password
     const encryptedPassword = await bcrypt.hash(password, SALT_ROUNDS)
-    
+
     // create new user
-    const user = new User({firstName, lastName, SSN, email, password: encryptedPassword, phoneNumber})
-    
+    const user = new User({
+      firstName,
+      lastName,
+      SSN,
+      email,
+      password: encryptedPassword,
+      phoneNumber,
+    })
+
     // create token with an expire date of 2 hrs
-    const token = jwt.sign(
-      { user_id: user._id, email },
-      'secret',
-      {
-        expiresIn: "2h",
-      }
-    )
+    const token = jwt.sign({ user_id: user._id, email }, 'secret', {
+      expiresIn: '2h',
+    })
 
     // save user token to created user
     user.save()
@@ -48,8 +57,7 @@ async function createUser (message: string) {
     console.log(user, token)
 
     // save new user to DB
-    return {...user._doc, token}
-    
+    return { ...user._doc, token }
   } catch {
     return 'Something went wrong'
   }
@@ -59,10 +67,10 @@ async function createUser (message: string) {
 async function login(message: string) {
   const userInfo = JSON.parse(message)
   const { email, password } = userInfo
-  
+
   // Validate user input
   if (!(email && password)) {
-    return ('All input is required')
+    return 'All input is required'
   }
 
   // Validate if user exist in our database
@@ -74,16 +82,12 @@ async function login(message: string) {
   // if user exists and passwords match, then create and assign user token
   if (user && (await bcrypt.compare(password, user.password))) {
     // Create token
-    const token = jwt.sign(
-      { user_id: user._id, email },
-      'secret',
-      {
-        expiresIn: "2h",
-      }
-    )
+    const token = jwt.sign({ user_id: user._id, email }, 'secret', {
+      expiresIn: '2h',
+    })
 
     // save user token
-    return {...user._doc, token}
+    return { ...user._doc, token }
   }
 }
 
@@ -93,9 +97,9 @@ async function getUser(message: string) {
     const userInfo = JSON.parse(message)
     const userID = userInfo.userid
     const user = await User.findById(userID)
-  
+
     if (!user) {
-          // eslint-disable-next-line no-console
+      // eslint-disable-next-line no-console
       console.log('Invalid user ID')
       return 'Invalid user ID'
     }
@@ -109,9 +113,7 @@ async function getUser(message: string) {
     // eslint-disable-next-line no-console
     console.log(user)
     return user
-  } 
-  
-  catch (error) {
+  } catch (error) {
     // eslint-disable-next-line no-console
     console.log(error)
     return error
@@ -124,7 +126,7 @@ async function deleteUser(message: string) {
     const userInfo = JSON.parse(message)
     const id = userInfo
     const user = await User.findOneAndDelete(id)
-  
+
     if (!user) {
       return 'Invalid id'
     }
@@ -136,9 +138,7 @@ async function deleteUser(message: string) {
     // eslint-disable-next-line no-console
     console.log(user)
     return 'User has been deleted'
-  } 
-  
-  catch (error) {
+  } catch (error) {
     // eslint-disable-next-line no-console
     console.log(error)
     return error
@@ -149,9 +149,18 @@ async function deleteUser(message: string) {
 async function updateUser(message: string) {
   try {
     const userInfo = JSON.parse(message)
-    const id = userInfo
-    const user = await User.findOneAndUpdate(id)
-  
+    const userID = userInfo.userid.userID
+    const user = await User.findById(userID)
+
+    if (user != null) {
+      user.firstName = userInfo.userid.firstName
+      user.lastName = userInfo.userid.lastName
+      user.SSN = userInfo.userid.SSN
+      user.email = userInfo.userid.email
+      user.password = userInfo.userid.password
+      user.phoneNumber = userInfo.userid.phoneNumber
+    }
+
     if (!user) {
       return 'Invalid id'
     }
@@ -162,10 +171,9 @@ async function updateUser(message: string) {
 
     // eslint-disable-next-line no-console
     console.log(user)
-    return 'User has been updated'
-  } 
-  
-  catch (error) {
+    user.save()
+    return user.id
+  } catch (error) {
     // eslint-disable-next-line no-console
     console.log(error)
     return error
