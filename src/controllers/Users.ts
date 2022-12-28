@@ -124,8 +124,8 @@ async function getUser(message: string) {
 async function deleteUser(message: string) {
   try {
     const userInfo = JSON.parse(message)
-    const id = userInfo
-    const user = await User.findOneAndDelete(id)
+    const id = userInfo.userid
+    const user = await User.findByIdAndDelete(id)
 
     if (!user) {
       return 'Invalid id'
@@ -137,6 +137,7 @@ async function deleteUser(message: string) {
 
     // eslint-disable-next-line no-console
     console.log(user)
+
     return 'User has been deleted'
   } catch (error) {
     // eslint-disable-next-line no-console
