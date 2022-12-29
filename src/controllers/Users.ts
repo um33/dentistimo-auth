@@ -153,12 +153,15 @@ async function updateUser(message: string) {
     const userID = userInfo.userid.userID
     const user = await User.findById(userID)
 
+    const encryptedPassword = await bcrypt.hash(userInfo.userid.password, SALT_ROUNDS)
+
+
     if (user != null) {
       user.firstName = userInfo.userid.firstName
       user.lastName = userInfo.userid.lastName
       user.SSN = userInfo.userid.SSN
       user.email = userInfo.userid.email
-      user.password = userInfo.userid.password
+      user.password = encryptedPassword
       user.phoneNumber = userInfo.userid.phoneNumber
     }
 
