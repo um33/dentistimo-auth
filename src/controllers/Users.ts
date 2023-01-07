@@ -268,5 +268,17 @@ async function updateUser(message: string) {
     }
   }
 }
+
+async function verifyToken(message: string) {
+  try {
+    const parsed = JSON.parse(message)
+    const token = parsed.token
+    const decoded = jwt.verify(token, 'secret')
+    return decoded
+  } catch (error) {
+    return error
+  }
+}
+
 // export funtions
-export default { createUser, login, getUser, deleteUser, updateUser }
+export default { createUser, login, getUser, deleteUser, updateUser, verifyToken }
