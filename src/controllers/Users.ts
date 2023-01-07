@@ -19,7 +19,6 @@ async function createUser(message: string) {
       confirmPassword,
       phoneNumber,
     } = userInfo
-
     // validate user input
     if (!(firstName && lastName && SSN && email && password && phoneNumber)) {
       throw new MQTTErrorException({
@@ -103,7 +102,7 @@ async function login(message: string) {
     if (!user) {
       throw new MQTTErrorException({
         code: 401,
-        message: 'invalid credential',
+        message: 'Invalid credentials',
       })
     }
 
@@ -113,9 +112,13 @@ async function login(message: string) {
       const token = jwt.sign({ user_id: user._id, email }, 'secret', {
         expiresIn: '2h',
       })
-
       // save user token
       return { ...user._doc, token }
+    } else {
+      throw new MQTTErrorException({
+        code: 401,
+        message: 'Invalid credentials'
+      })
     }
   } catch (error) {
     if (error instanceof MQTTErrorException) {
