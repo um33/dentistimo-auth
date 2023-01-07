@@ -153,8 +153,10 @@ async function updateUser(message: string) {
     const userID = userInfo.userid.userID
     const user = await User.findById(userID)
 
-    const encryptedPassword = await bcrypt.hash(userInfo.userid.password, SALT_ROUNDS)
-
+    const encryptedPassword = await bcrypt.hash(
+      userInfo.userid.password,
+      SALT_ROUNDS
+    )
 
     if (user != null) {
       user.firstName = userInfo.userid.firstName
@@ -184,5 +186,16 @@ async function updateUser(message: string) {
   }
 }
 
+async function verifyToken(message: string) {
+  try {
+    const parsed = JSON.parse(message)
+    const token = parsed.token
+    const decoded = jwt.verify(token, 'secret')
+    return decoded
+  } catch (error) {
+    return error
+  }
+}
+
 // export funtions
-export default { createUser, login, getUser, deleteUser, updateUser }
+export default { createUser, login, getUser, deleteUser, updateUser, verifyToken }
