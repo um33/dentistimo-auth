@@ -142,7 +142,7 @@ async function login(message: string) {
 async function getUser(message: string) {
   try {
     const userInfo = JSON.parse(message)
-    const userID = userInfo.userid
+    const userID = userInfo.user_id
     const user = await User.findById(userID)
 
     if (!user) {
@@ -182,7 +182,7 @@ async function getUser(message: string) {
 async function deleteUser(message: string) {
   try {
     const userInfo = JSON.parse(message)
-    const id = userInfo.userid
+    const id = userInfo.user_id
     const user = await User.findByIdAndDelete(id)
 
     if (!user) {
@@ -222,7 +222,7 @@ async function deleteUser(message: string) {
 async function updateUser(message: string) {
   try {
     const userInfo = JSON.parse(message)
-    const userID = userInfo.userid.userID
+    const userID = userInfo.user_id
     const user = await User.findById(userID)
 
     const encryptedPassword = await bcrypt.hash(
@@ -284,4 +284,11 @@ async function verifyToken(message: string) {
 }
 
 // export funtions
-export default { createUser, login, getUser, deleteUser, updateUser, verifyToken }
+export default {
+  createUser,
+  login,
+  getUser,
+  deleteUser,
+  updateUser,
+  verifyToken,
+}
