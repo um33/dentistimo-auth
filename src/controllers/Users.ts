@@ -117,7 +117,7 @@ async function login(message: string) {
     } else {
       throw new MQTTErrorException({
         code: 401,
-        message: 'Invalid credentials'
+        message: 'Invalid credentials',
       })
     }
   } catch (error) {
@@ -222,47 +222,14 @@ async function deleteUser(message: string) {
 async function updateUser(message: string) {
   try {
     const userInfo = JSON.parse(message)
-    const userID = userInfo.user_id
-    const user = await User.findById(userID)
-
-    const encryptedPassword = await bcrypt.hash(
-      userInfo.userid.password,
-      SALT_ROUNDS
+    const { user_id, firstName, lastName, SSN, email, phoneNumber } = userInfo
+    const user = await User.findByIdAndUpdate(
+      user_id,
+      { firstName, lastName, SSN, email, phoneNumber },
+      { new: true }
     )
-
-    if (user != null) {
-      user.firstName = userInfo.userid.firstName
-      user.lastName = userInfo.userid.lastName
-      user.SSN = userInfo.userid.SSN
-      user.email = userInfo.userid.email
-      user.password = encryptedPassword
-      user.phoneNumber = userInfo.userid.phoneNumber
-    }
-
-    if (!user) {
-      throw new MQTTErrorException({
-        code: 400,
-        message: 'Invalid id',
-      })
-    }
-    if (user === null) {
-      throw new MQTTErrorException({
-        code: 400,
-        message: 'User does not exist',
-      })
-    }
-
-    user.save()
-    return user.id
+    return user
   } catch (error) {
-    if (error instanceof MQTTErrorException) {
-      return {
-        error: {
-          code: error.code,
-          message: error.message,
-        },
-      }
-    }
     return {
       error: {
         code: 500,
